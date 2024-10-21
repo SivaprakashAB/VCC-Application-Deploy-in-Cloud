@@ -1,6 +1,6 @@
 import streamlit as st
-import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 import plotly.express as px
 
 # App Title
@@ -8,67 +8,74 @@ st.title("Advanced Streamlit Application")
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
-options = st.sidebar.radio("Select a page:", ["Home", "Data Upload", "Visualizations", "Contact"])
+options = st.sidebar.radio("Select a page:", ["Home", "User Inputs", "Visualizations", "Contact"])
 
 # Home Page
 if options == "Home":
     st.header("Welcome to the Advanced Streamlit App!")
     st.markdown("""
-        This app showcases advanced features like:
-        - Data Upload and Processing
-        - Dynamic Data Visualizations (Matplotlib, Plotly)
-        - User Forms and Interactions
+        This app demonstrates:
+        - User Input Forms and Sliders
+        - Interactive Visualizations (Matplotlib and Plotly)
     """)
 
-# Data Upload Page
-elif options == "Data Upload":
-    st.header("Upload Your Dataset")
-    
-    # File uploader for CSV data
-    uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
-    
-    if uploaded_file is not None:
-        # Read CSV and display
-        df = pd.read_csv(uploaded_file)
-        st.write("Data preview:")
-        st.dataframe(df.head())
-        
-        # Show basic data statistics
-        if st.checkbox("Show data statistics"):
-            st.write(df.describe())
+# User Inputs Page
+elif options == "User Inputs":
+    st.header("User Inputs and Forms")
+
+    # Text input form
+    user_name = st.text_input("Enter your name")
+    st.write(f"Hello, {user_name}!")
+
+    # Age slider
+    age = st.slider("Select your age", 1, 100, 25)
+    st.write(f"Your age is {age}.")
+
+    # Radio button for selecting gender
+    gender = st.radio("Select your gender:", ("Male", "Female", "Other"))
+    st.write(f"You selected: {gender}")
+
+    # Multiselect for hobbies
+    hobbies = st.multiselect("Select your hobbies:", ['Reading', 'Traveling', 'Sports', 'Music'])
+    st.write(f"Your hobbies are: {', '.join(hobbies)}")
+
+    # Numeric input
+    number = st.number_input("Pick a number", min_value=0, max_value=100, value=10)
+    st.write(f"You selected {number}")
 
 # Visualizations Page
 elif options == "Visualizations":
-    st.header("Data Visualizations")
-    
-    if uploaded_file is not None:
-        # Option to select a column for visualization
-        columns = df.columns.tolist()
-        column_to_plot = st.selectbox("Choose a column to visualize", columns)
-        
-        # Matplotlib Bar Chart
-        st.subheader(f"Matplotlib Bar Chart of {column_to_plot}")
-        plt.figure(figsize=(10, 5))
-        df[column_to_plot].value_counts().plot(kind='bar', color='skyblue')
-        st.pyplot(plt)
-        
-        # Plotly Scatter Plot
-        st.subheader(f"Plotly Scatter Plot of {column_to_plot} vs index")
-        fig = px.scatter(df, x=df.index, y=column_to_plot, title=f"Scatter Plot of {column_to_plot}")
-        st.plotly_chart(fig)
+    st.header("Dynamic Visualizations")
 
-    else:
-        st.warning("Please upload a dataset to visualize.")
+    # Matplotlib visualization (Sin wave)
+    st.subheader("Matplotlib Sin and Cos Wave")
+    x = np.linspace(0, 10, 100)
+    y_sin = np.sin(x)
+    y_cos = np.cos(x)
+    
+    plt.figure(figsize=(10, 5))
+    plt.plot(x, y_sin, label="Sin(x)", color="blue")
+    plt.plot(x, y_cos, label="Cos(x)", color="red")
+    plt.legend()
+    st.pyplot(plt)
+
+    # Plotly interactive scatter plot
+    st.subheader("Plotly Interactive Scatter Plot")
+    x = np.random.randn(100)
+    y = np.random.randn(100)
+    
+    fig = px.scatter(x=x, y=y, labels={'x': 'Random X', 'y': 'Random Y'}, title="Random Scatter Plot")
+    st.plotly_chart(fig)
 
 # Contact Page
 elif options == "Contact":
     st.header("Contact Us")
-    
+
     with st.form(key="contact_form"):
         name = st.text_input("Name")
         email = st.text_input("Email")
         message = st.text_area("Message")
-        
+
         submit_button = st.form_submit_button("Submit")
         
         if submit_button:
