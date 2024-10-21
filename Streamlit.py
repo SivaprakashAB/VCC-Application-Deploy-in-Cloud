@@ -1,45 +1,84 @@
 import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
+import plotly.express as px
 
-# Injecting custom CSS for advanced styling
-st.markdown(
-    """
-    <style>
-    .main {
-        background-color: #f0f8ff;
-    }
-    .title {
-        font-size: 50px;
-        color: #4CAF50;
-        text-align: center;
-    }
-    .info-text {
-        font-size: 18px;
-        color: #ff6347;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+# App Title
+st.title("Advanced Streamlit Application")
 
-# Title of the app
-st.markdown('<p class="title">Simple Streamlit App with CSS</p>', unsafe_allow_html=True)
+# Sidebar navigation
+st.sidebar.title("Navigation")
+options = st.sidebar.radio("Select a page:", ["Home", "Data Upload", "Visualizations", "Contact"])
 
-# Input text from the user
-user_input = st.text_input("Enter your name")
+# Home Page
+if options == "Home":
+    st.header("Welcome to the Advanced Streamlit App!")
+    st.markdown("""
+        This app showcases advanced features like:
+        - Data Upload and Processing
+        - Dynamic Data Visualizations (Matplotlib, Plotly)
+        - User Forms and Interactions
+    """)
 
-# Button to trigger an action
-if st.button("Submit"):
-    # Output the input value as a greeting message
-    st.markdown(f'<p class="info-text">Hello, {user_input}!</p>', unsafe_allow_html=True)
+# Data Upload Page
+elif options == "Data Upload":
+    st.header("Upload Your Dataset")
+    
+    # File uploader for CSV data
+    uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
+    
+    if uploaded_file is not None:
+        # Read CSV and display
+        df = pd.read_csv(uploaded_file)
+        st.write("Data preview:")
+        st.dataframe(df.head())
+        
+        # Show basic data statistics
+        if st.checkbox("Show data statistics"):
+            st.write(df.describe())
 
-# Add a slider for selecting age
-age = st.slider("Select your age", 1, 100, 25)
-st.markdown(f'<p class="info-text">Your age is: {age}</p>', unsafe_allow_html=True)
+# Visualizations Page
+elif options == "Visualizations":
+    st.header("Data Visualizations")
+    
+    if uploaded_file is not None:
+        # Option to select a column for visualization
+        columns = df.columns.tolist()
+        column_to_plot = st.selectbox("Choose a column to visualize", columns)
+        
+        # Matplotlib Bar Chart
+        st.subheader(f"Matplotlib Bar Chart of {column_to_plot}")
+        plt.figure(figsize=(10, 5))
+        df[column_to_plot].value_counts().plot(kind='bar', color='skyblue')
+        st.pyplot(plt)
+        
+        # Plotly Scatter Plot
+        st.subheader(f"Plotly Scatter Plot of {column_to_plot} vs index")
+        fig = px.scatter(df, x=df.index, y=column_to_plot, title=f"Scatter Plot of {column_to_plot}")
+        st.plotly_chart(fig)
 
-# Display a checkbox for additional information
-if st.checkbox("Show additional information"):
-    st.markdown('<p class="info-text">You checked the box!</p>', unsafe_allow_html=True)
+    else:
+        st.warning("Please upload a dataset to visualize.")
 
-# Additional advanced widget: Color Picker
-favorite_color = st.color_picker("Pick your favorite color")
-st.write(f"Your favorite color is: {favorite_color}")
+# Contact Page
+elif options == "Contact":
+    st.header("Contact Us")
+    
+    with st.form(key="contact_form"):
+        name = st.text_input("Name")
+        email = st.text_input("Email")
+        message = st.text_area("Message")
+        
+        submit_button = st.form_submit_button("Submit")
+        
+        if submit_button:
+            st.success("Form submitted successfully!")
+            st.write(f"Name: {name}")
+            st.write(f"Email: {email}")
+            st.write(f"Message: {message}")
+
+# Footer
+st.sidebar.markdown("""
+    **Developed by:** Your Name  
+    **GitHub:** [Your GitHub](https://github.com/yourgithub)
+""")
