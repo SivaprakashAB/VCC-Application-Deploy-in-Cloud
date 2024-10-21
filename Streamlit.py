@@ -1,91 +1,45 @@
 import streamlit as st
-import matplotlib.pyplot as plt
-import numpy as np
-import plotly.express as px
 
-# App Title
-st.title("Advanced Streamlit Application")
+# Injecting custom CSS for advanced styling
+st.markdown(
+    """
+    <style>
+    .main {
+        background-color: #f0f8ff;
+    }
+    .title {
+        font-size: 50px;
+        color: #4CAF50;
+        text-align: center;
+    }
+    .info-text {
+        font-size: 18px;
+        color: #ff6347;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
-# Sidebar navigation
-st.sidebar.title("Navigation")
-options = st.sidebar.radio("Select a page:", ["Home", "User Inputs", "Visualizations", "Contact"])
+# Title of the app
+st.markdown('<p class="title">Simple Streamlit App with CSS</p>', unsafe_allow_html=True)
 
-# Home Page
-if options == "Home":
-    st.header("Welcome to the Advanced Streamlit App!")
-    st.markdown("""
-        This app demonstrates:
-        - User Input Forms and Sliders
-        - Interactive Visualizations (Matplotlib and Plotly)
-    """)
+# Input text from the user
+user_input = st.text_input("Enter your name")
 
-# User Inputs Page
-elif options == "User Inputs":
-    st.header("User Inputs and Forms")
+# Button to trigger an action
+if st.button("Submit"):
+    # Output the input value as a greeting message
+    st.markdown(f'<p class="info-text">Hello, {user_input}!</p>', unsafe_allow_html=True)
 
-    # Text input form
-    user_name = st.text_input("Enter your name")
-    st.write(f"Hello, {user_name}!")
+# Add a slider for selecting age
+age = st.slider("Select your age", 1, 100, 25)
+st.markdown(f'<p class="info-text">Your age is: {age}</p>', unsafe_allow_html=True)
 
-    # Age slider
-    age = st.slider("Select your age", 1, 100, 25)
-    st.write(f"Your age is {age}.")
+# Display a checkbox for additional information
+if st.checkbox("Show additional information"):
+    st.markdown('<p class="info-text">You checked the box!</p>', unsafe_allow_html=True)
 
-    # Radio button for selecting gender
-    gender = st.radio("Select your gender:", ("Male", "Female", "Other"))
-    st.write(f"You selected: {gender}")
-
-    # Multiselect for hobbies
-    hobbies = st.multiselect("Select your hobbies:", ['Reading', 'Traveling', 'Sports', 'Music'])
-    st.write(f"Your hobbies are: {', '.join(hobbies)}")
-
-    # Numeric input
-    number = st.number_input("Pick a number", min_value=0, max_value=100, value=10)
-    st.write(f"You selected {number}")
-
-# Visualizations Page
-elif options == "Visualizations":
-    st.header("Dynamic Visualizations")
-
-    # Matplotlib visualization (Sin wave)
-    st.subheader("Matplotlib Sin and Cos Wave")
-    x = np.linspace(0, 10, 100)
-    y_sin = np.sin(x)
-    y_cos = np.cos(x)
-    
-    plt.figure(figsize=(10, 5))
-    plt.plot(x, y_sin, label="Sin(x)", color="blue")
-    plt.plot(x, y_cos, label="Cos(x)", color="red")
-    plt.legend()
-    st.pyplot(plt)
-
-    # Plotly interactive scatter plot
-    st.subheader("Plotly Interactive Scatter Plot")
-    x = np.random.randn(100)
-    y = np.random.randn(100)
-    
-    fig = px.scatter(x=x, y=y, labels={'x': 'Random X', 'y': 'Random Y'}, title="Random Scatter Plot")
-    st.plotly_chart(fig)
-
-# Contact Page
-elif options == "Contact":
-    st.header("Contact Us")
-
-    with st.form(key="contact_form"):
-        name = st.text_input("Name")
-        email = st.text_input("Email")
-        message = st.text_area("Message")
-
-        submit_button = st.form_submit_button("Submit")
-        
-        if submit_button:
-            st.success("Form submitted successfully!")
-            st.write(f"Name: {name}")
-            st.write(f"Email: {email}")
-            st.write(f"Message: {message}")
-
-# Footer
-st.sidebar.markdown("""
-    **Developed by:** Your Name  
-    **GitHub:** [Your GitHub](https://github.com/yourgithub)
-""")
+# Additional advanced widget: Color Picker
+favorite_color = st.color_picker("Pick your favorite color")
+st.write(f"Your favorite color is: {favorite_color}")
